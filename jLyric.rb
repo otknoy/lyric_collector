@@ -5,10 +5,11 @@ require 'uri'
 require 'nokogiri'
 
 class JLyric
-  def self.get_search_results title
+  def self.get_search_results_by_title title
     results = []
     i = 1
     loop do
+      print i, ' '
       r = search(i, title, 2, '', 2, '', 2)
       break if r.empty?
       results.concat(r)
@@ -36,33 +37,44 @@ class JLyric
     doc = Nokogiri::HTML(open(uri))
     lyricBlock = doc.css('#lyricBlock')
     info = {}
-    info[:title] = lyricBlock.css('div.caption').inner_text
-    info[:status] = lyricBlock.xpath('//div/table//tr/td').inner_text
+    info[:title] = lyricBlock.css('div.caption').inner_text.gsub(/[ 　\/]/, '')
+    info[:status] = lyricBlock.xpath('//div/table//tr/td').map do |td|
+      td.inner_text.split('：')[1].gsub(/[ 　\/]/, '')
+    end
     info[:lyric] = lyricBlock.css('#lyricBody').inner_text.strip.gsub(/\r?\n/, "\n")
     info
   end
 end
 
 if __FILE__ == $0
-  # get lyric
+  title = ARGV.first
+  output_dir = "./output/#{title}"
+
+  # # get lyric
   # uri = 'http://j-lyric.net/artist/a002907/l00731d.html'
   # info = JLyric::get_song_info uri
-  # puts info[:artist]
+  # puts info[:title]
+  # puts info[:status].first
   # puts info[:lyric]
-
+  
   # get uri list by title
-  results = JLyric::get_search_results 'さくら'
+  results = JLyric::get_search_results_by_title title
   results.each do |r|
     uri = r[:uri]
     info = JLyric::get_song_info uri
 
-    puts 'title:'
-    puts info[:title]
-    puts 'status:'
-    puts info[:status]
-    puts 'lyric:'
-    puts info[:lyric]    
-    puts
+    filename = "#{output_dir}/#{info[:title]}_#{info[:status].first}.txt"
+    FileUtils.mkdir_p(output_dir)
+
+    open(filename, 'w') do |f|
+      str = "title:\n#{info[:title]}\n\n"
+      str << "status:\n#{info[:status].join("\n")}\n\n"
+      str << "lyric:\n#{info[:lyric]}\n"
+      f.write(str)
+    end
+    puts filename
+
+    sleep 1
   end
 
   # require '../nlp/nlp.rb'
