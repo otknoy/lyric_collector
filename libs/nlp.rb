@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 require 'MeCab'
 
@@ -55,17 +55,17 @@ end
 
 
 if __FILE__ == $0
-  text = '山下くんは山下さんと山下に行った。'
+  text = '山下くんは山下さんと東京特許許可局に行った。'
   
   morphemes = NLP.parse(text)
   puts "morphemes:"  
-  puts morphemes
+  puts morphemes.map{|m|m[:surface]}.join(' ')
 
-  # nouns = NLP.extract_noun(morphemes)
-  # puts "nouns:"
-  # puts nouns
+  nouns = NLP.extract_noun(morphemes)
+  puts "nouns:"
+  puts nouns.map{|n|n[:surface]}.join(' ')
 
-  # tf = NLP.tf(morphemes.map{|m|m[:surface]})
-  # puts "tf:"
-  # puts tf
+  tf = NLP.tf(morphemes.map{|m|m[:surface]})
+  puts "tf:"
+  puts tf
 end
