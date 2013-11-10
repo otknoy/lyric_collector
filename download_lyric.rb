@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-require './libs/JLyric.rb'
+require './libs/jLyric.rb'
 
 out_dir = './output'
-# query = 'さくら'
-query = 'さだまさし'
+query = 'さくら'
+# query = 'さだまさし'
 puts "query: #{query}"
 
-uri_list = JLyric.get_search_results_by_artist query
+uri_list = JLyric.get_search_results_by_title query
 puts "#{uri_list.length} uris"
 
 dir = "#{out_dir}/#{query}"
@@ -26,7 +26,7 @@ uri_list.each do |uri|
     f.write "singe:\n#{singer}\n\n"
     f.write "writer:\n#{writer}\n\n"
     f.write "composer:\n#{composer}\n\n"
-    f.write "lyric:\n#{lyric}}\n"
+    f.write "lyric:\n#{lyric}\n"
   end
 end
 
