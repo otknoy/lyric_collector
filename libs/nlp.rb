@@ -1,8 +1,13 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 require 'MeCab'
+require 'nkf'
 
 class NLP
+  def self.normalize str
+    NKF.nkf('-wm0Z1', str)
+  end
+
   def self.parse text
     m = MeCab::Tagger.new('-Ochasen')
     node = m.parseToNode(text)
@@ -64,6 +69,8 @@ class NLP
       tf[t] = 0 unless tf.has_key? t
       tf[t] += 1
     end
+    ## normalize
+    # tf.inject({}){|a, (t, f)| a[t] = f/terms.length.to_f;a}
     tf
   end
 
@@ -78,7 +85,7 @@ class NLP
     df
   end
 
-  def self.tfidf tf_list, df
+  def self.tfidf tf_list, df=self.df(tf_list)
     n = tf_list.length
     tfidf_list = []
     tf_list.each do |tf|
