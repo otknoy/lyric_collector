@@ -10,7 +10,7 @@ class JLyric
   end
 
   def self.get_search_results_by_artist artist
-    self.search('', 2, artist, 1, '', 2)
+    self.search('', 2, artist, 2, '', 2)
   end
 
   def self.search kt, ct, ka, ca, kl, cl
